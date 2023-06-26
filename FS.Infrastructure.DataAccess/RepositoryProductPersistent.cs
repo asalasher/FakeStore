@@ -22,7 +22,7 @@ namespace FS.Infrastructure.DataAccess
             return;
         }
 
-        public async Task<IEnumerable<Product>> CreateBulkAsync(IEnumerable<Product> products)
+        public async Task<IEnumerable<Product>> AddBulkAsync(IEnumerable<Product> products)
         {
             await SaveData(products);
             return products;

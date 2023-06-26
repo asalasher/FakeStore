@@ -6,53 +6,64 @@ namespace FK.Services
 {
     public class ServicesProduct : IServicesProduct
     {
-        private readonly IRepositoryProducts _repositoryProducts;
+        private readonly IRepositoryProductsExternalService _repositoryProductsExternal;
+        private readonly IRepositoryProducts _repositoryProductsDatabase;
 
-        public ServicesProduct(IRepositoryProducts repositoryProducts)
+        public ServicesProduct(
+            IRepositoryProductsExternalService repositoryProductsExternal,
+            IRepositoryProducts repositoryProductsDatabase
+            )
         {
-            _repositoryProducts = repositoryProducts;
+            _repositoryProductsExternal = repositoryProductsExternal;
+            _repositoryProductsDatabase = repositoryProductsDatabase;
         }
 
         public async Task<IEnumerable<Product>> GetProducts()
         {
+            try
+            {
+                // Call external API
+                var products = await _repositoryProductsExternal.GetAllAsync();
+
+                // Save data to backup
+                await _repositoryProductsDatabase.AddBulkAsync(products);
+
+                return products;
+            }
+            catch (HttpRequestException ex)
+            {
+                // TODO -> _logger.Log(ex.message)
+
+                // Get info from backup
+                IEnumerable<Product> products = await _repositoryProductsDatabase.GetAllAsync();
+                return products;
+            }
+        }
+
+        public async Task<Product?> GetProductById(int id)
+        {
+            Product? product;
 
             try
             {
                 // Call external API
-                var products = await _repositoryProducts.GetAllAsync();
+                product = await _repositoryProductsExternal.GetAsync(id);
 
                 // Save data to backup
-                var createdProducts = await _repositoryProducts.CreateAsync(products);
+                if (product is not null)
+                {
+                    await _repositoryProductsDatabase.UpdateAsync(product);
+                }
 
-                // Return data to client
-                var a = await new HttpClient().GetAsync("google.com");
-
+                return product;
             }
             catch (HttpRequestException ex)
             {
-                // Log error
-
-                // Try and get info from backup
-
-                // If no data is found return null
-
-                // Return information
-
-                // catch error and log
-            }
-            catch (Exception ex)
-            {
-                // Log error
+                // TODO -> _logger.Log(ex.message)
+                // Get info from backup
+                return await _repositoryProductsDatabase.GetAsync(id);
             }
 
-            await Task.Run(() => { });
-
-            return new List<Product>()
-            {
-                new Product { Id = 1, Description = "product1"},
-                new Product { Id = 2, Description = "product2"},
-                new Product { Id = 3, Description = "product3"},
-            };
         }
 
     }

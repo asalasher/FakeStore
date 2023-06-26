@@ -24,6 +24,5 @@ namespace FS.DistributedSystems.Controllers
             IEnumerable<Product> products = await _servicesProduct.GetProducts();
             return Ok(products);
         }
-
     }
 }

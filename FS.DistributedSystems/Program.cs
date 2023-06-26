@@ -1,13 +1,18 @@
 using FK.Services;
 using FK.Services.Contracts;
+using FK.Services.Implementations;
 using FS.Domain.Entities.Contracts;
 using FS.Infrastructure.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IRepositoryCarts, RepositoryCartPersistent>();
+builder.Services.AddScoped<IRepositoryProductsExternalService, RepositoryProductExternalApi>();
+builder.Services.AddScoped<IRepositoryProducts, RepositoryProductPersistent>();
+
 builder.Services.AddScoped<IServicesProduct, ServicesProduct>();
-builder.Services.AddScoped<IRepositoryProducts, RepositoryProductExternalApi>();
+builder.Services.AddScoped<IServicesCart, ServicesCart>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

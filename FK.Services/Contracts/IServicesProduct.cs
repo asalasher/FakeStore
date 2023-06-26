@@ -5,5 +5,6 @@ namespace FK.Services.Contracts
     public interface IServicesProduct
     {
         Task<IEnumerable<Product>> GetProducts();
+        Task<Product?> GetProductById(int id);
     }
 }

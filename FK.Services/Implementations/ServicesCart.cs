@@ -1,54 +1,39 @@
-﻿using FS.Domain.Entities.Contracts;
+﻿using FK.Services.Contracts;
+using FS.Domain.Entities.Contracts;
 using FS.Domain.Entities.Entities;
 
 namespace FK.Services.Implementations
 {
-    public class ServicesCart
+    public class ServicesCart : IServicesCart
     {
         private readonly IRepositoryCarts _repositoryCarts;
-        private readonly IRepositoryProducts _repositoryProducts;
+        private readonly IServicesProduct _servicesProduct;
 
         public ServicesCart(
             IRepositoryCarts repositoryCarts,
-            IRepositoryProducts repositoryProducts
+            IServicesProduct servicesProduct
             )
         {
             _repositoryCarts = repositoryCarts;
-            _repositoryProducts = repositoryProducts;
+            _servicesProduct = servicesProduct;
         }
 
-        public async Task<bool> AddProductToCart(int idCart, int idProduct)
+        public async Task<Cart?> AddProductToCart(int idCart, int idProduct)
         {
-            try
+            Product? product = await _servicesProduct.GetProductById(idProduct);
+            Cart? cart = await _repositoryCarts.GetAsync(idCart);
+            if (cart is null || product is null)
             {
-                Cart? cart = await _repositoryCarts.GetAsync(idCart);
-                Product? product = await _repositoryProducts.GetAsync(idProduct);
-
-                if (cart is null || product is null)
-                {
-                    throw new ArgumentException("Item not found in repositories");
-                }
-                return true;
+                throw new ArgumentException("Item not found in repositories");
             }
-            catch (Exception e)
-            {
-                // TODO -> _logger.LogError(ex.message);
-                return false;
-            }
+            cart.AddProduct(product);
+            var updatedCart = await _repositoryCarts.UpdateAsync(cart);
+            return updatedCart;
         }
 
         public async Task<Cart?> CreateNewCart()
         {
-            try
-            {
-                Cart cart = await _repositoryCarts.CreateAsync(new Cart());
-                return cart;
-            }
-            catch (Exception e)
-            {
-                // TODO -> _logger.LogError(ex.message);
-                return null;
-            }
+            return await _repositoryCarts.CreateAsync(new Cart());
         }
 
     }

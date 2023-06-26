@@ -4,14 +4,10 @@ using System.Text.Json;
 
 namespace FS.Infrastructure.DataAccess
 {
-    public class RepositoryProductExternalApi : IRepositoryProducts
+    public class RepositoryProductExternalApi : IRepositoryProductsExternalService
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly string _baseUrl = "https://fakestoreapi.com";
-
-        public RepositoryProductExternalApi()
-        {
-        }
 
         public async Task<Product?> GetAsync(int id)
         {
