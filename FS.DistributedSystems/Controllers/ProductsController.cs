@@ -11,18 +11,28 @@ namespace FS.DistributedSystems.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IServicesProduct _servicesProduct;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IServicesProduct servicesProduct)
+        public ProductsController(IServicesProduct servicesProduct, ILogger<ProductsController> logger)
         {
             _servicesProduct = servicesProduct;
+            _logger = logger;
         }
 
         // GET: api/<ProductsController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> Get()
         {
-            IEnumerable<Product> products = await _servicesProduct.GetProducts();
-            return Ok(products);
+            try
+            {
+                IEnumerable<Product> products = await _servicesProduct.GetProducts();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("your request could not be fulfilled");
+            }
         }
     }
 }

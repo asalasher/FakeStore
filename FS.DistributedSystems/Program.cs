@@ -3,10 +3,20 @@ using FK.Services.Contracts;
 using FK.Services.Implementations;
 using FS.Domain.Entities.Contracts;
 using FS.Infrastructure.DataAccess;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
+builder.Logging.ClearProviders(); // me cargo los loggers que habia antes
+// Defino el nuevo
+var logger = new LoggerConfiguration()
+    .ReadFrom
+    .Configuration(builder.Configuration) // esto lee del appSettings.json la informacion del log
+    .CreateLogger();
+builder.Logging.AddSerilog(logger);
+
 builder.Services.AddScoped<IRepositoryCarts, RepositoryCartPersistent>();
 builder.Services.AddScoped<IRepositoryProductsExternalService, RepositoryProductExternalApi>();
 builder.Services.AddScoped<IRepositoryProducts, RepositoryProductPersistent>();

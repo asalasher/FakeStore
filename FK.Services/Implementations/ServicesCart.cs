@@ -24,7 +24,7 @@ namespace FK.Services.Implementations
             Cart? cart = await _repositoryCarts.GetAsync(idCart);
             if (cart is null || product is null)
             {
-                throw new ArgumentException("Item not found in repositories");
+                throw new ArgumentException("Item or cart not found in repositories");
             }
             cart.AddProduct(product);
             var updatedCart = await _repositoryCarts.UpdateAsync(cart);

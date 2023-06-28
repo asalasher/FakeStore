@@ -36,7 +36,7 @@ namespace FS.Infrastructure.DataAccess
         public async Task<Cart?> GetAsync(int id)
         {
             var items = await GetDeserializeItems();
-            return items?.FirstOrDefault(x => x.Id == id);
+            return items.FirstOrDefault(x => x.Id == id);
         }
 
         public async Task<Cart?> UpdateAsync(Cart cart)

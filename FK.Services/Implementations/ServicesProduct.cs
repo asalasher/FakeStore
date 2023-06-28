@@ -1,6 +1,7 @@
 ﻿using FK.Services.Contracts;
 using FS.Domain.Entities.Contracts;
 using FS.Domain.Entities.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace FK.Services
 {
@@ -8,14 +9,17 @@ namespace FK.Services
     {
         private readonly IRepositoryProductsExternalService _repositoryProductsExternal;
         private readonly IRepositoryProducts _repositoryProductsDatabase;
+        private readonly ILogger<ServicesProduct> _logger;
 
         public ServicesProduct(
             IRepositoryProductsExternalService repositoryProductsExternal,
-            IRepositoryProducts repositoryProductsDatabase
+            IRepositoryProducts repositoryProductsDatabase,
+            ILogger<ServicesProduct> logger
             )
         {
             _repositoryProductsExternal = repositoryProductsExternal;
             _repositoryProductsDatabase = repositoryProductsDatabase;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Product>> GetProducts()
@@ -42,28 +46,7 @@ namespace FK.Services
 
         public async Task<Product?> GetProductById(int id)
         {
-            Product? product;
-
-            try
-            {
-                // Call external API
-                product = await _repositoryProductsExternal.GetAsync(id);
-
-                // Save data to backup
-                if (product is not null)
-                {
-                    await _repositoryProductsDatabase.UpdateAsync(product);
-                }
-
-                return product;
-            }
-            catch (HttpRequestException ex)
-            {
-                // TODO -> _logger.Log(ex.message)
-                // Get info from backup
-                return await _repositoryProductsDatabase.GetAsync(id);
-            }
-
+            return await _repositoryProductsDatabase.GetAsync(id);
         }
 
     }
