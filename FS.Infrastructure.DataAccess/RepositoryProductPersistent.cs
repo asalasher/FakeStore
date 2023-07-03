@@ -6,7 +6,13 @@ namespace FS.Infrastructure.DataAccess
 {
     public class RepositoryProductPersistent : IRepositoryProducts
     {
-        private readonly string _path = AppDomain.CurrentDomain.ToString();
+        private readonly string _storageFileName = "productStorage.txt";
+        private readonly string _path;
+
+        public RepositoryProductPersistent()
+        {
+            _path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LocalStorage", _storageFileName);
+        }
 
         private async Task<List<Product>> GetDeserializeItems()
         {
@@ -17,7 +23,7 @@ namespace FS.Infrastructure.DataAccess
 
         private async Task SaveData(IEnumerable<Product> products)
         {
-            var payloadAsString = JsonSerializer.Serialize(products);
+            string payloadAsString = JsonSerializer.Serialize(products);
             await File.WriteAllTextAsync(_path, payloadAsString);
             return;
         }

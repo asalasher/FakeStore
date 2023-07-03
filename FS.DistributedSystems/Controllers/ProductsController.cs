@@ -21,7 +21,8 @@ namespace FS.DistributedSystems.Controllers
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> Get()
+        [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
+        public async Task<IActionResult> Get()
         {
             try
             {

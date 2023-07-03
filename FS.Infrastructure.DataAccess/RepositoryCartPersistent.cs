@@ -6,7 +6,12 @@ namespace FS.Infrastructure.DataAccess
 {
     public class RepositoryCartPersistent : IRepositoryCarts
     {
-        private readonly string _path = AppDomain.CurrentDomain.ToString();
+        private readonly string _storageFileName = "cartStorage.txt";
+        private readonly string _path;
+        public RepositoryCartPersistent()
+        {
+            _path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LocalStorage", _storageFileName);
+        }
 
         private async Task<int> GetLastId()
         {

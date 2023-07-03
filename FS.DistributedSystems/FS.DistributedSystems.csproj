@@ -20,4 +20,13 @@
     <ProjectReference Include="..\FS.Infrastructure.DataAccess\FS.Infrastructure.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="LocalStorage\cartStorage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="LocalStorage\productStorage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

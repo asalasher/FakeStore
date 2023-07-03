@@ -31,12 +31,11 @@ namespace FK.Services
 
                 // Save data to backup
                 await _repositoryProductsDatabase.AddBulkAsync(products);
-
                 return products;
             }
             catch (HttpRequestException ex)
             {
-                // TODO -> _logger.Log(ex.message)
+                _logger.LogError(ex.Message);
 
                 // Get info from backup
                 IEnumerable<Product> products = await _repositoryProductsDatabase.GetAllAsync();
